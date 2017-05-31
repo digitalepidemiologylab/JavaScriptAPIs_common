@@ -1,6 +1,6 @@
 /* @flow */
 
-import { reachUrlWithPromise } from '../ajaxhelpers';
+import { reachUrlWithPromise } from './ajaxhelpers';
 
 export default class GenericAPI {
 
