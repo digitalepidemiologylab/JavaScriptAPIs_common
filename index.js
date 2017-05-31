@@ -1,3 +1,3 @@
 /* @flow */
 
-export GenericAPI from './GenericAPI';
+export { default as GenericAPI } from './GenericAPI';
