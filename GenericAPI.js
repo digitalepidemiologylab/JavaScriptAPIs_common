@@ -29,6 +29,8 @@ export default class GenericAPI {
     function handler(response) {
       try {
         const createReachUrlCall = function createReachUrlCall(name) {
+          if (!response.links[name]) return null;
+          
           return function reachUrlCall() {
             return reachUrlWithPromise({
               method,
@@ -38,10 +40,12 @@ export default class GenericAPI {
             });
           };
         };
-        response.next = createReachUrlCall('next');
-        response.prev = createReachUrlCall('prev');
-        response.first = createReachUrlCall('first');
-        response.last = createReachUrlCall('last');
+        if (response.links) {
+          response.next = createReachUrlCall('next');
+          response.prev = createReachUrlCall('prev');
+          response.first = createReachUrlCall('first');
+          response.last = createReachUrlCall('last');
+        }
       } catch (error) {
         response.error = error;
       }
