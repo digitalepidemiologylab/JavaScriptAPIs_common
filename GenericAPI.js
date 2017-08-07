@@ -8,14 +8,16 @@ export default class GenericAPI {
   version: string;
   apiKey: string;
   sessionToken: string;
+  contentType: string;
 
-  constructor(apiKey: string, host: string, version: string) {
+  constructor(apiKey: string, host: string, version: string, contentType  = 'application/json') {
     if (!apiKey) {
       throw new Error('Endpoints need an API key');
     }
     this.apiKey = apiKey;
     this.host = host;
     this.version = version;
+    this.contentType = version;
   }
 
   requestURL(method: string, kind: string, query: ?string[], postData: Object) {
@@ -24,13 +26,14 @@ export default class GenericAPI {
 
     const headers = [
       ['Authorization', `Token token="${this.apiKey}"${this.sessionToken ? `, session="${this.sessionToken}"` : ''}`],
+      ['Content-Type', this.contentType]
     ];
 
     function handler(response) {
       try {
         const createReachUrlCall = function createReachUrlCall(name) {
           if (!response.links[name]) return null;
-          
+
           return function reachUrlCall() {
             return reachUrlWithPromise({
               method,
