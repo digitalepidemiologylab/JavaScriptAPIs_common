@@ -39,8 +39,6 @@ function reachUrl(method: string, url: string, headers: string[][], postData?: O
   // Prepare POST data, if any
   let dataStr = 0;
   if (method !== 'GET' && postData) {
-    // xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    // xhttp.setRequestHeader('Content-type', 'application/json');
     dataStr = typeof postData === 'string' ? postData : JSON.stringify(postData);
   }
 
