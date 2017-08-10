@@ -11,7 +11,9 @@ type paramsType = {
   postData?: Object;
 }
 
-function reachUrl(method: string, url: string, headers: string[][], postData?: Object,
+const curlEquivalentToConsole = false;
+
+function reachUrl(method: string, url: string, headers: string[][], body?: Object,
   callback: Function, errorCallback: Function) {
   const xhttp = new XMLHttpRequest();
 
@@ -29,17 +31,17 @@ function reachUrl(method: string, url: string, headers: string[][], postData?: O
     callback(xhttp);
   };
 
-  xhttp.onerror = () => {
-    errorCallback(xhttp);
+  xhttp.onerror = (error) => {
+    errorCallback(error, xhttp);
   };
 
   // Open connection
   xhttp.open(method, url, true);
 
-  // Prepare POST data, if any
-  let dataStr = 0;
-  if (method !== 'GET' && postData) {
-    dataStr = typeof postData === 'string' ? postData : JSON.stringify(postData);
+  let curlStr = `curl -X ${method}`;
+
+  function singleQuoteEscape(s) {
+    return s.replace(/'/g, "\\'");
   }
 
   // Put headers
@@ -47,17 +49,33 @@ function reachUrl(method: string, url: string, headers: string[][], postData?: O
     headers.forEach((header) => {
       if (Array.isArray(header) && header.length === 2) {
         xhttp.setRequestHeader(header[0], header[1]);
+        curlStr += ` -H '${singleQuoteEscape(header[0])}: ${singleQuoteEscape(header[1])}'`;
       }
     });
   }
 
+  // Prepare body
+  let bodyStr = null;
+  if (body) {
+    bodyStr = typeof body === 'string'
+      ? body
+      : JSON.stringify(body);
+
+    curlStr += ` -d '${singleQuoteEscape(bodyStr)}'`;
+  }
+
+  curlStr += ` ${url}`;
+
+  // Log curl equivalent
+  if (curlEquivalentToConsole) console.log(curlStr);
+
   // Send request
-  xhttp.send(dataStr !== 0 ? dataStr : null);
+  xhttp.send(bodyStr);
 }
 
 function reachUrlWithPromise(params: paramsType) {
   return new Promise((resolve, reject) => {
-    reachUrl(params.method, params.url, params.headers || [], params.postData,
+    reachUrl(params.method, params.url, params.headers || [], params.body,
       (xhttp) => {
         if (xhttp.status === 200) {
           resolve(xhttp.response, xhttp);
