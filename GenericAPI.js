@@ -22,20 +22,15 @@ export default class GenericAPI {
     const queryStr = query ? `?${query.join('&')}` : '';
     const url = `${this.host}/api/v${this.version}/${kind}${queryStr}`;
 
-    let authorization = `Token token="${this.apiKey}`;
+    let authorization = `Token token="${this.apiKey}"`;
     if (this.sessionToken) {
       authorization += `, session="${this.sessionToken}"`;
     }
 
     const headers = [
       ['Authorization', authorization],
+      ['Content-Type', 'application/json'],
     ];
-
-    if (method === 'POST') {
-      headers.push(['Content-Type', 'application/x-www-form-urlencoded']);
-    } else {
-      headers.push(['Content-Type', 'application/json']);
-    }
 
     function handler(response) {
       try {
