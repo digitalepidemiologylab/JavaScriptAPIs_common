@@ -37,8 +37,12 @@ export default class GenericAPI {
 
     const headers = [
       ['Authorization', authorization],
-      ['Content-Type', 'application/json'],
     ];
+    if (typeof body !== 'undefined') {
+      headers.push(
+        ['Content-Type', 'application/json'],
+      );
+    }
 
     function handler(response) {
       try {
