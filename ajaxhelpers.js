@@ -89,7 +89,7 @@ function reachUrlWithPromise(params: paramsType) {
           reject(new HttpError(xhttp));
         }
       },
-      xhttp => reject(Error('Network Error'), xhttp),
+      xhttp => reject(new HttpError(xhttp)),
     );
   });
 }
