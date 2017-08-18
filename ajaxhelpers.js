@@ -1,5 +1,11 @@
 function HttpError(request) {
-  const error = new Error(request.statusText || request.responseText);
+  const details = [];
+  details.push(`Status code: ${request.status}`);
+  if (typeof request.statusText === 'string') {
+    details.push(`Status: ${request.statusText}`);
+  }
+  details.push(`Response: ${request.responseText}`);
+  const error = new Error(`(${details.join(', ')})`);
   error.request = request;
   return error;
 }
