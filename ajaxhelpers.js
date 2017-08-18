@@ -84,7 +84,7 @@ function reachUrlWithPromise(params: paramsType) {
     reachUrl(params.method, params.url, params.headers || [], params.body,
       (xhttp) => {
         if (xhttp.status === 200) {
-          resolve(xhttp.response, xhttp);
+          resolve(xhttp);
         } else {
           reject(new HttpError(xhttp));
         }
