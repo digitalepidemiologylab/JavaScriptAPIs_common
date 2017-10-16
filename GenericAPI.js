@@ -26,7 +26,7 @@ export default class GenericAPI {
     this.version = version;
   }
 
-  requestURL(method: string, kind: string, query: ?string[], body?: Object) {
+  requestURL(method: string, kind: string, query: ?string[], body?: ?Object) {
     const queryStr = query ? `?${query.join('&')}` : '';
     const url = `${this.host}/api/v${this.version}/${kind}${queryStr}`;
 
@@ -99,22 +99,22 @@ export default class GenericAPI {
   }
 
   requestGetURL(kind: string): Promise<*> {
-    return this.requestURL(RestFulMethods.GET, kind, null, null);
+    return this.requestURL(RestFulMethods.GET, kind);
   }
 
-  requestPostURL(kind: string, body: Object = null): Promise<*> {
+  requestPostURL(kind: string, body: ?Object): Promise<*> {
     return this.requestURL(RestFulMethods.POST, kind, null, body);
   }
 
-  requestDeleteURL(kind: string, body: Object = null): Promise<*> {
+  requestDeleteURL(kind: string, body: ?Object): Promise<*> {
     return this.requestURL(RestFulMethods.DELETE, kind, null, body);
   }
 
-  requestPatchURL(kind: string, body: Object = null): Promise<Object> {
+  requestPatchURL(kind: string, body: ?Object): Promise<Object> {
     return this.requestURL(RestFulMethods.PATCH, kind, null, body);
   }
 
-  requestPutURL(kind: string, body: Object = null): Promise<Object> {
+  requestPutURL(kind: string, body: ?Object): Promise<Object> {
     return this.requestURL(RestFulMethods.PUT, kind, null, body);
   }
 }
