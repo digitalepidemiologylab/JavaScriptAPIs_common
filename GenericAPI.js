@@ -11,7 +11,6 @@ const RestFulMethods = {
 };
 
 export default class GenericAPI {
-
   host: string;
   version: string;
   apiKey: string;
@@ -26,7 +25,12 @@ export default class GenericAPI {
     this.version = version;
   }
 
-  requestURL(method: string, kind: string, query: ?string[], body?: ?Object) {
+  requestURL(
+    method: string,
+    kind: string,
+    query: ?(string[]),
+    body?: ?Object,
+  ): Promise<*> {
     const queryStr = query ? `?${query.join('&')}` : '';
     const url = `${this.host}/api/v${this.version}/${kind}${queryStr}`;
 
@@ -35,13 +39,9 @@ export default class GenericAPI {
       authorization += `, session="${this.sessionToken}"`;
     }
 
-    const headers = [
-      ['Authorization', authorization],
-    ];
+    const headers = [['Authorization', authorization]];
     if (typeof body !== 'undefined') {
-      headers.push(
-        ['Content-Type', 'application/json'],
-      );
+      headers.push(['Content-Type', 'application/json']);
     }
 
     function handler(response) {
@@ -83,7 +83,11 @@ export default class GenericAPI {
           try {
             obj = JSON.parse(xhttp.response);
           } catch (e) {
-            reject(new HttpError(`Could not parse JSON response: ${xhttp.response}`));
+            reject(
+              new HttpError(
+                `Could not parse JSON response: ${xhttp.response}`,
+              ),
+            );
             return;
           }
           if (obj !== null) {
