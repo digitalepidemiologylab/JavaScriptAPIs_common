@@ -6,16 +6,13 @@
   },
   "version": "0.0.5",
   "description": "Common files for JavaScript APIs.",
-  "author": "Boris Conforty <boris@conforty.net>, Salathé Group, EPFL, Switzerland",
+  "author":
+    "Boris Conforty <boris@conforty.net>, Salathé Group, EPFL, Switzerland",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "license": "MIT",
   "homepage": "https://github.com/salathegroup/JavaScriptAPIs_common.git",
-  "keywords": [
-    "api",
-    "salathe",
-    "salathegroup"
-  ]
+  "keywords": ["api", "salathe", "salathegroup"]
 }
