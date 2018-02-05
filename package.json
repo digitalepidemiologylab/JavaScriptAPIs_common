@@ -8,7 +8,7 @@
   "description": "Common files for JavaScript APIs.",
   "author":
     "Boris Conforty <boris@conforty.net>, Salathé Group, EPFL, Switzerland",
-  "main": "index.js",
+  "main": "GenericAPI.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
