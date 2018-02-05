@@ -1,26 +1,40 @@
-function HttpError(request) {
-  const details = [];
-  details.push(`Status code: ${request.status}`);
-  if (typeof request.statusText === 'string') {
-    details.push(`Status: ${request.statusText}`);
+// @flow
+
+class HttpError extends Error {
+  request: XMLHttpRequest;
+
+  constructor(request: XMLHttpRequest) {
+    const details = [];
+    details.push(`Status code: ${request.status}`);
+    if (typeof request.statusText === 'string') {
+      details.push(`Status: ${request.statusText}`);
+    }
+    details.push(`Response: ${request.responseText}`);
+    const message = `(${details.join(', ')})`;
+    super(message);
+
+    this.request = request;
   }
-  details.push(`Response: ${request.responseText}`);
-  const error = new Error(`(${details.join(', ')})`);
-  error.request = request;
-  return error;
 }
 
-type paramsType = {
-  method: string;
-  url: string;
-  headers?: string[][];
-  postData?: Object;
-}
+type ParamsType = {
+  method: string,
+  url: string,
+  headers?: string[][],
+  postData?: Object,
+  body?: ?Object,
+};
 
-const curlEquivalentToConsole = false;
+const curlEquivalentToConsole = true;
 
-function reachUrl(method: string, url: string, headers: string[][], body?: Object,
-  callback: Function, errorCallback: Function) {
+function reachUrl(
+  method: string,
+  url: string,
+  headers: string[][],
+  body: ?(string | Object),
+  callback: (xhttp: XMLHttpRequest, event?: any) => void,
+  errorCallback: (xhttp: XMLHttpRequest) => void,
+) {
   const xhttp = new XMLHttpRequest();
 
   /*
@@ -37,8 +51,8 @@ function reachUrl(method: string, url: string, headers: string[][], body?: Objec
     callback(xhttp);
   };
 
-  xhttp.onerror = (error) => {
-    errorCallback(error, xhttp);
+  xhttp.onerror = () => {
+    errorCallback(xhttp);
   };
 
   // Open connection
@@ -47,7 +61,7 @@ function reachUrl(method: string, url: string, headers: string[][], body?: Objec
   let curlStr = `curl -X ${method}`;
 
   function singleQuoteEscape(s) {
-    return s.replace(/'/g, "\\'");
+    return s.replace(/'/g, '\\\'');
   }
 
   // Put headers
@@ -55,17 +69,17 @@ function reachUrl(method: string, url: string, headers: string[][], body?: Objec
     headers.forEach((header) => {
       if (Array.isArray(header) && header.length === 2) {
         xhttp.setRequestHeader(header[0], header[1]);
-        curlStr += ` -H '${singleQuoteEscape(header[0])}: ${singleQuoteEscape(header[1])}'`;
+        curlStr += ` -H '${singleQuoteEscape(header[0])}: ${singleQuoteEscape(
+          header[1],
+        )}'`;
       }
     });
   }
 
   // Prepare body
-  let bodyStr = null;
+  let bodyStr: ?string = null;
   if (body) {
-    bodyStr = typeof body === 'string'
-      ? body
-      : JSON.stringify(body);
+    bodyStr = typeof body === 'string' ? body : JSON.stringify(body);
 
     curlStr += ` -d '${singleQuoteEscape(bodyStr)}'`;
   }
@@ -79,20 +93,24 @@ function reachUrl(method: string, url: string, headers: string[][], body?: Objec
   xhttp.send(bodyStr);
 }
 
-function reachUrlWithPromise(params: paramsType) {
+function reachUrlWithPromise(params: ParamsType): Promise<XMLHttpRequest> {
   return new Promise((resolve, reject) => {
-    reachUrl(params.method, params.url, params.headers || [], params.body,
-      (xhttp) => {
+    reachUrl(
+      params.method,
+      params.url,
+      params.headers || [],
+      params.body,
+      (xhttp: XMLHttpRequest) => {
         if (xhttp.status === 200) {
           resolve(xhttp);
         } else {
           reject(new HttpError(xhttp));
         }
       },
-      xhttp => reject(new HttpError(xhttp)),
+      (xhttp: XMLHttpRequest) => reject(new HttpError(xhttp)),
     );
   });
 }
 
 export { HttpError, reachUrlWithPromise };
-export type UrlPromiseParamsType = paramsType;
+export type UrlPromiseParamsType = ParamsType;

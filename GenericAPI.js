@@ -1,6 +1,6 @@
 /* @flow */
 
-import { HttpError, reachUrlWithPromise } from './ajaxhelpers';
+import { reachUrlWithPromise } from './ajaxhelpers';
 
 const RestFulMethods = {
   GET: 'GET',
@@ -9,6 +9,24 @@ const RestFulMethods = {
   PUT: 'PUT',
   DELETE: 'DELETE',
 };
+
+type Links = {|
+  next?: string,
+  prev?: string,
+  first?: string,
+  last?: string,
+|};
+
+type LinkName = $Keys<Links>;
+
+type Response = {|
+  links: Links,
+  next?: ?Function,
+  prev?: ?Function,
+  first?: ?Function,
+  last?: ?Function,
+  error?: Error,
+|};
 
 export default class GenericAPI {
   host: string;
@@ -28,7 +46,7 @@ export default class GenericAPI {
   requestURL(
     method: string,
     kind: string,
-    query: ?(string[]),
+    query?: ?(string[]),
     body?: ?Object,
   ): Promise<*> {
     const queryStr = query ? `?${query.join('&')}` : '';
@@ -44,12 +62,15 @@ export default class GenericAPI {
       headers.push(['Content-Type', 'application/json']);
     }
 
-    function handler(response) {
+    function handler(response: Response) {
       try {
-        const createReachUrlCall = function createReachUrlCall(name) {
+        const createReachUrlCall = function createReachUrlCall(
+          name: LinkName,
+        ): ?Function {
           if (!response.links[name]) return null;
 
           return function reachUrlCall() {
+            if (!response.links[name]) return null;
             return reachUrlWithPromise({
               method,
               url: unescape(response.links[name]),
@@ -58,6 +79,7 @@ export default class GenericAPI {
             });
           };
         };
+
         if (response.links) {
           response.next = createReachUrlCall('next');
           response.prev = createReachUrlCall('prev');
@@ -84,9 +106,7 @@ export default class GenericAPI {
             obj = JSON.parse(xhttp.response);
           } catch (e) {
             reject(
-              new HttpError(
-                `Could not parse JSON response: ${xhttp.response}`,
-              ),
+              new Error(`Could not parse JSON response: ${xhttp.response}`),
             );
             return;
           }
