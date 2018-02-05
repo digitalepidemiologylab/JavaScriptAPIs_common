@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/salathegroup/JavaScriptAPIs_common.git"
   },
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Common files for JavaScript APIs.",
   "author":
     "Boris Conforty <boris@conforty.net>, Salathé Group, EPFL, Switzerland",
