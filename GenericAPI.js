@@ -43,12 +43,7 @@ export default class GenericAPI {
     this.version = version;
   }
 
-  requestURL(
-    method: string,
-    kind: string,
-    query?: ?(string[]),
-    body?: ?Object,
-  ): Promise<*> {
+  requestURL(method: string, kind: string, query?: ?(string[]), body?: ?Object): Promise<*> {
     const queryStr = query ? `?${query.join('&')}` : '';
     const url = `${this.host}/api/v${this.version}/${kind}${queryStr}`;
 
@@ -64,9 +59,7 @@ export default class GenericAPI {
 
     function handler(response: Response) {
       try {
-        const createReachUrlCall = function createReachUrlCall(
-          name: LinkName,
-        ): ?Function {
+        const createReachUrlCall = function createReachUrlCall(name: LinkName): ?Function {
           if (!response.links[name]) return null;
 
           return function reachUrlCall() {
