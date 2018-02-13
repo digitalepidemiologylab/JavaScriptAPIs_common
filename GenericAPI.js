@@ -80,7 +80,7 @@ export default class GenericAPI {
           response.last = createReachUrlCall('last');
         }
       } catch (error) {
-        response.error = error;
+        response.error = (error: Error);
       }
     }
 
@@ -91,16 +91,15 @@ export default class GenericAPI {
         headers,
         body,
       })
-      .then((xhttp) => {
+      .then((xhttp: XMLHttpRequest) => {
         const contentType = xhttp.getResponseHeader('Content-Type');
         if (/^application\/json(;|$)/.test(contentType)) {
-          let obj = null;
+          let obj: ?Object = null;
+          const { response } = xhttp;
           try {
-            obj = JSON.parse(xhttp.response);
+            obj = (JSON.parse(response): Object);
           } catch (e) {
-            reject(
-              new Error(`Could not parse JSON response: ${xhttp.response}`),
-            );
+            reject(new Error(`Could not parse JSON response: ${response}`));
             return;
           }
           if (obj !== null) {
