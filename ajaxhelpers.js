@@ -25,7 +25,7 @@ type ParamsType = {
   body?: ?Object,
 };
 
-const curlEquivalentToConsole = true;
+const curlEquivalentToConsole = false;
 
 function reachUrl(
   method: string,
