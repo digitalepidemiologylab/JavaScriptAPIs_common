@@ -48,6 +48,7 @@ export default class GenericAPI {
     kind: string,
     query?: ?(string[]),
     body?: ?Object,
+    timeout: number = 0,
   ): Promise<*> {
     const queryStr = query ? `?${query.join('&')}` : '';
     const url = `${this.host}/api/v${this.version}/${kind}${queryStr}`;
@@ -97,6 +98,7 @@ export default class GenericAPI {
         url,
         headers,
         body,
+        timeout,
       })
       .then((xhttp: XMLHttpRequest) => {
         const contentType = xhttp.getResponseHeader('Content-Type');
@@ -121,23 +123,41 @@ export default class GenericAPI {
     });
   }
 
-  requestGetURL(kind: string): Promise<*> {
-    return this.requestURL(RestFulMethods.GET, kind);
+  requestGetURL(kind: string, timeout: number = 0): Promise<*> {
+    return this.requestURL(
+      RestFulMethods.GET,
+      kind,
+      undefined,
+      undefined,
+      timeout,
+    );
   }
 
-  requestPostURL(kind: string, body: ?Object): Promise<*> {
-    return this.requestURL(RestFulMethods.POST, kind, null, body);
+  requestPostURL(kind: string, body: ?Object, timeout: number = 0): Promise<*> {
+    return this.requestURL(RestFulMethods.POST, kind, null, body, timeout);
   }
 
-  requestDeleteURL(kind: string, body: ?Object): Promise<*> {
-    return this.requestURL(RestFulMethods.DELETE, kind, null, body);
+  requestDeleteURL(
+    kind: string,
+    body: ?Object,
+    timeout: number = 0,
+  ): Promise<*> {
+    return this.requestURL(RestFulMethods.DELETE, kind, null, body, timeout);
   }
 
-  requestPatchURL(kind: string, body: ?Object): Promise<Object> {
-    return this.requestURL(RestFulMethods.PATCH, kind, null, body);
+  requestPatchURL(
+    kind: string,
+    body: ?Object,
+    timeout: number = 0,
+  ): Promise<Object> {
+    return this.requestURL(RestFulMethods.PATCH, kind, null, body, timeout);
   }
 
-  requestPutURL(kind: string, body: ?Object): Promise<Object> {
-    return this.requestURL(RestFulMethods.PUT, kind, null, body);
+  requestPutURL(
+    kind: string,
+    body: ?Object,
+    timeout: number = 0,
+  ): Promise<Object> {
+    return this.requestURL(RestFulMethods.PUT, kind, null, body, timeout);
   }
 }

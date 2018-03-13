@@ -23,6 +23,7 @@ type ParamsType = {
   headers?: string[][],
   postData?: Object,
   body?: ?Object,
+  timeout?: number,
 };
 
 const curlEquivalentToConsole = false;
@@ -34,6 +35,7 @@ function reachUrl(
   body: ?(string | Object),
   callback: (xhttp: XMLHttpRequest, event?: any) => void,
   errorCallback: (xhttp: XMLHttpRequest) => void,
+  timeout: ?number,
 ) {
   const xhttp = new XMLHttpRequest();
 
@@ -54,6 +56,13 @@ function reachUrl(
   xhttp.onerror = () => {
     errorCallback(xhttp);
   };
+
+  xhttp.ontimeout = () => {
+    errorCallback(xhttp);
+  };
+
+  xhttp.timeout = timeout || 0;
+  // alert(`xhttp.timeout: ${xhttp.timeout}`);
 
   // Open connection
   xhttp.open(method, url, true);
@@ -108,6 +117,7 @@ function reachUrlWithPromise(params: ParamsType): Promise<XMLHttpRequest> {
         }
       },
       (xhttp: XMLHttpRequest) => reject(new HttpError(xhttp)),
+      params.timeout || 0,
     );
   });
 }
