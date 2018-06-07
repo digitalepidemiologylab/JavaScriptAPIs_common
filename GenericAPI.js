@@ -119,7 +119,9 @@ export default class GenericAPI {
           resolve(xhttp);
         }
       })
-      .catch(reject);
+      .catch((error) => {
+        reject(error);
+      });
     });
   }
 
