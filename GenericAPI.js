@@ -34,6 +34,8 @@ export default class GenericAPI {
   apiKey: string;
   sessionToken: string;
 
+  on401: ?(error: Error) => void = null;
+
   constructor(apiKey: string, host: string, version: string) {
     if (!apiKey) {
       throw new Error('Endpoints need an API key');
@@ -120,6 +122,14 @@ export default class GenericAPI {
         }
       })
       .catch((error) => {
+        if (
+          this.on401 &&
+            error &&
+            error.request &&
+            error.request.status === 401
+        ) {
+          this.on401(error);
+        }
         reject(error);
       });
     });
