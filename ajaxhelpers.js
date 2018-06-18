@@ -38,6 +38,10 @@ function reachUrl(
   timeout: ?number,
 ) {
   const xhttp = new XMLHttpRequest();
+  let timeoutTimer = null;
+
+  // Open connection
+  xhttp.open(method, url, true);
 
   /*
   xhttp.onreadystatechange = function onreadystatechange() {
@@ -61,11 +65,19 @@ function reachUrl(
     errorCallback(xhttp);
   };
 
+  xhttp.onabort = () => {
+    errorCallback(xhttp);
+  };
+
+  xhttp.onreadystatechange = () => {
+    if (timeoutTimer) {
+      clearTimeout(timeoutTimer);
+      timeoutTimer = null;
+    }
+  };
+
   xhttp.timeout = timeout || 0;
   // alert(`xhttp.timeout: ${xhttp.timeout}`);
-
-  // Open connection
-  xhttp.open(method, url, true);
 
   let curlStr = `curl -X ${method}`;
 
@@ -100,6 +112,13 @@ function reachUrl(
 
   // Send request
   xhttp.send(bodyStr);
+
+  // Handle timeouts ourselves too because on Android, it seems
+  // buggy connections in emulator fail to trigger timeouts
+  // (i.e. could not resolve host)
+  timeoutTimer = setTimeout(() => {
+    xhttp.abort();
+  }, timeout * 1.1);
 }
 
 function reachUrlWithPromise(params: ParamsType): Promise<XMLHttpRequest> {
