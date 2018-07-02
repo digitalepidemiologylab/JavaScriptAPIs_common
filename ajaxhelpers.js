@@ -73,7 +73,7 @@ class HttpError extends Error {
     if (typeof request.statusText === 'string') {
       details.push(`Status: ${request.statusText}`);
     }
-    details.push(`Response: ${request.responseText}`);
+    details.push(`Response: ${responseToString(request)}`);
     const message = `(${details.join(', ')})`;
     super(message);
 
