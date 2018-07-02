@@ -1,5 +1,36 @@
 // @flow
 
+const pako = require('pako');
+
+type ByteArrayToStrMethod = 'auto' | 'gzip' | 'string';
+
+function byteArrayToStr(
+  byteArray: Uint8Array,
+  method: ByteArrayToStrMethod = 'auto',
+) {
+  let actualMethod;
+  if (method === 'auto') {
+    if (byteArray.length > 1) {
+      // cf. http://www.zlib.org/rfc-gzip.html
+      const [ID1, ID2] = byteArray;
+      if (ID1 === 31 && ID2 === 139) {
+        actualMethod = 'gzip';
+      } else {
+        actualMethod = 'string';
+      }
+    } else {
+      actualMethod = method;
+    }
+  }
+  switch (actualMethod) {
+    case 'string':
+      return String.fromCharCode.apply(null, byteArray);
+    case 'gzip':
+      return pako.inflate(byteArray, { to: 'string' });
+    default:
+      throw new Error(`Invalid byte array to string method: ${method}`);
+  }
+}
 class HttpError extends Error {
   request: XMLHttpRequest;
 
