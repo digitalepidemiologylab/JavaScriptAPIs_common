@@ -103,6 +103,7 @@ export default class GenericAPI {
         headers,
         body,
         timeout,
+        responseType: 'arraybuffer',
       })
       .then((xhttp: XMLHttpRequest) => {
         const contentType = xhttp.getResponseHeader('Content-Type');
