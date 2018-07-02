@@ -116,9 +116,11 @@ function reachUrl(
   // Handle timeouts ourselves too because on Android, it seems
   // buggy connections in emulator fail to trigger timeouts
   // (i.e. could not resolve host)
-  timeoutTimer = setTimeout(() => {
-    xhttp.abort();
-  }, timeout * 1.1);
+  if (xhttp.timeout) {
+    timeoutTimer = setTimeout(() => {
+      xhttp.abort();
+    }, xhttp.timeout * 1.1);
+  }
 }
 
 function reachUrlWithPromise(params: ParamsType): Promise<XMLHttpRequest> {
