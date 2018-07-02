@@ -31,6 +31,39 @@ function byteArrayToStr(
       throw new Error(`Invalid byte array to string method: ${method}`);
   }
 }
+
+function responseToString(xhttp: XMLHttpRequest) {
+  try {
+    switch (xhttp.responseType) {
+      case '':
+      case 'text':
+        return xhttp.responseText;
+      case 'arraybuffer': {
+        const { response } = xhttp;
+        const contentEncoding = xhttp.getResponseHeader('Content-Encoding');
+        if (contentEncoding === 'gzip') {
+          const byteArray = new Uint8Array(response);
+          return byteArrayToStr(byteArray);
+        }
+        return response;
+      }
+      default:
+        throw new Error('Could not convert response to string');
+    }
+  } catch (e) {
+    throw new Error('Could not convert response to string');
+  }
+}
+
+function responseToObject(xhttp: XMLHttpRequest) {
+  try {
+    const text = responseToString(xhttp);
+    return JSON.parse(text);
+  } catch (e) {
+    throw new Error('Could not convert response to object');
+  }
+}
+
 class HttpError extends Error {
   request: XMLHttpRequest;
 
