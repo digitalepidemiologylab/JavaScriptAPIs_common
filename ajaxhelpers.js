@@ -213,5 +213,11 @@ function reachUrlWithPromise(params: ParamsType): Promise<XMLHttpRequest> {
   });
 }
 
-export { HttpError, reachUrlWithPromise };
+export {
+  HttpError,
+  reachUrlWithPromise,
+  byteArrayToStr,
+  responseToString,
+  responseToObject,
+};
 export type UrlPromiseParamsType = ParamsType;
