@@ -65,6 +65,8 @@ export default class GenericAPI {
       headers.push(['Content-Type', 'application/json']);
     }
 
+    headers.push(['Accept-Encoding', 'gzip']);
+
     function handler(response: Response) {
       try {
         const createReachUrlCall = function createReachUrlCall(
