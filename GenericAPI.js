@@ -1,6 +1,6 @@
 /* @flow */
 
-import { reachUrlWithPromise } from './ajaxhelpers';
+import { reachUrlWithPromise, responseToObject } from './ajaxhelpers';
 
 const RestFulMethods = {
   GET: 'GET',
@@ -108,18 +108,17 @@ export default class GenericAPI {
       .then((xhttp: XMLHttpRequest) => {
         const contentType = xhttp.getResponseHeader('Content-Type');
         if (/^application\/json(;|$)/.test(contentType)) {
-          let obj: ?Object = null;
-          const { response } = xhttp;
           try {
-            obj = (JSON.parse(response): Object);
+            const obj: ?Object = responseToObject(xhttp);
+            if (obj !== null && obj !== undefined) {
+              handler(obj);
+              resolve(obj);
+            } else {
+              reject(new Error('Could not parse JSON response'));
+            }
           } catch (e) {
-            reject(new Error(`Could not parse JSON response: ${response}`));
-            return;
+            reject(new Error('Could not parse JSON response'));
           }
-          if (obj !== null) {
-            handler(obj);
-          }
-          resolve(obj);
         } else {
           resolve(xhttp);
         }
