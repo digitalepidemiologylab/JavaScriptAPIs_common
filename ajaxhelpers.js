@@ -48,6 +48,8 @@ class HttpError extends Error {
   }
 }
 
+type ResponseType = '' | 'arraybuffer' | 'blob' | 'document' | 'json' | 'text';
+
 type ParamsType = {
   method: string,
   url: string,
@@ -55,6 +57,7 @@ type ParamsType = {
   postData?: Object,
   body?: ?Object,
   timeout?: number,
+  responseType?: ResponseType,
 };
 
 const curlEquivalentToConsole = false;
@@ -67,12 +70,14 @@ function reachUrl(
   callback: (xhttp: XMLHttpRequest, event?: any) => void,
   errorCallback: (xhttp: XMLHttpRequest) => void,
   timeout: ?number,
+  responseType: ?ResponseType,
 ) {
   const xhttp = new XMLHttpRequest();
   let timeoutTimer = null;
 
   // Open connection
   xhttp.open(method, url, true);
+  xhttp.responseType = responseType || '';
 
   /*
   xhttp.onreadystatechange = function onreadystatechange() {
@@ -170,6 +175,7 @@ function reachUrlWithPromise(params: ParamsType): Promise<XMLHttpRequest> {
       },
       (xhttp: XMLHttpRequest) => reject(new HttpError(xhttp)),
       params.timeout || 0,
+      params.responseType,
     );
   });
 }
