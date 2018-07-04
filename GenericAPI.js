@@ -65,7 +65,15 @@ export default class GenericAPI {
       headers.push(['Content-Type', 'application/json']);
     }
 
-    headers.push(['Accept-Encoding', 'gzip']);
+    const compress = false;
+    let responseType;
+    if (compress) {
+      headers.push(['Accept-Encoding', 'gzip']);
+      responseType = 'arraybuffer';
+    } else {
+      headers.push(['Accept-Encoding', 'identity']);
+      responseType = '';
+    }
 
     function handler(response: Response) {
       try {
@@ -103,7 +111,7 @@ export default class GenericAPI {
         headers,
         body,
         timeout,
-        responseType: 'arraybuffer',
+        responseType,
       })
       .then((xhttp: XMLHttpRequest) => {
         const contentType = xhttp.getResponseHeader('Content-Type');
