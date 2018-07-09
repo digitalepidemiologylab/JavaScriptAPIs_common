@@ -1,6 +1,10 @@
 /* @flow */
 
-import { reachUrlWithPromise, responseToObject } from './ajaxhelpers';
+import {
+  reachUrlWithPromise,
+  responseToObject,
+  type ResponseType,
+} from './ajaxhelpers';
 
 const RestFulMethods = {
   GET: 'GET',
@@ -66,7 +70,7 @@ export default class GenericAPI {
     }
 
     const compress = false;
-    let responseType;
+    let responseType: ResponseType;
     if (compress) {
       headers.push(['Accept-Encoding', 'gzip']);
       responseType = 'arraybuffer';
