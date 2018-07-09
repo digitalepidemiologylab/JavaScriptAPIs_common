@@ -81,7 +81,13 @@ class HttpError extends Error {
   }
 }
 
-type ResponseType = '' | 'arraybuffer' | 'blob' | 'document' | 'json' | 'text';
+export type ResponseType =
+  | ''
+  | 'arraybuffer'
+  | 'blob'
+  | 'document'
+  | 'json'
+  | 'text';
 
 type ParamsType = {
   method: string,
