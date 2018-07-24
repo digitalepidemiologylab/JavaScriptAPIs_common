@@ -32,13 +32,20 @@ type Response = {|
   error?: Error,
 |};
 
+export type TError = {
+  message?: string,
+  request: {
+    status?: ?number,
+  },
+};
+
 export default class GenericAPI {
   host: string;
   version: string;
   apiKey: string;
   sessionToken: string;
 
-  on401: ?(error: Error) => void = null;
+  onError: ?(error: TError) => void = null;
 
   constructor(apiKey: string, host: string, version: string) {
     if (!apiKey) {
@@ -136,13 +143,8 @@ export default class GenericAPI {
         }
       })
       .catch((error) => {
-        if (
-          this.on401 &&
-            error &&
-            error.request &&
-            error.request.status === 401
-        ) {
-          this.on401(error);
+        if (this.onError) {
+          this.onError(error);
         }
         reject(error);
       });
