@@ -44,16 +44,23 @@ export default class GenericAPI {
   version: string;
   apiKey: string;
   sessionToken: string;
+  compress: boolean;
 
   onError: ?(error: TError) => void = null;
 
-  constructor(apiKey: string, host: string, version: string) {
+  constructor(
+    apiKey: string,
+    host: string,
+    version: string,
+    compress: boolean = true,
+  ) {
     if (!apiKey) {
       throw new Error('Endpoints need an API key');
     }
     this.apiKey = apiKey;
     this.host = host;
     this.version = version;
+    this.compress = compress;
   }
 
   requestURL(
@@ -76,9 +83,8 @@ export default class GenericAPI {
       headers.push(['Content-Type', 'application/json']);
     }
 
-    const compress = false;
     let responseType: ResponseType;
-    if (compress) {
+    if (this.compress) {
       headers.push(['Accept-Encoding', 'gzip']);
       responseType = 'arraybuffer';
     } else {
