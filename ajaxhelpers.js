@@ -9,13 +9,8 @@ function responseToString(xhttp: XMLHttpRequest) {
       case 'text':
         return xhttp.responseText;
       case 'arraybuffer': {
-        const { response } = xhttp;
-        const contentEncoding = xhttp.getResponseHeader('Content-Encoding');
-        if (contentEncoding === 'gzip') {
-          const byteArray = new Uint8Array(response);
-          return byteArrayToStr(byteArray);
-        }
-        return response;
+        const byteArray = new Uint8Array(xhttp.response);
+        return byteArrayToStr(byteArray);
       }
       default:
         throw new Error('Could not convert response to string');
