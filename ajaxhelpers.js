@@ -55,7 +55,7 @@ export type ResponseType =
   | 'text';
 
 type ParamsType = {
-  method: string,
+  method?: string,
   url: string,
   headers?: string[][],
   postData?: Object,
@@ -67,7 +67,7 @@ type ParamsType = {
 const curlEquivalentToConsole = false;
 
 function reachUrl(
-  method: string,
+  method: string = 'GET',
   url: string,
   headers: string[][],
   body: ?(string | Object),
