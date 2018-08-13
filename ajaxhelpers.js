@@ -31,17 +31,20 @@ function responseToObject(xhttp: XMLHttpRequest) {
 
 class HttpError extends Error {
   request: XMLHttpRequest;
+  response: ?string;
 
   constructor(request: XMLHttpRequest) {
     const details = [];
+    const response = responseToString(request);
     details.push(`Status code: ${request.status}`);
     if (typeof request.statusText === 'string') {
       details.push(`Status: ${request.statusText}`);
     }
-    details.push(`Response: ${responseToString(request)}`);
+    details.push(`Response: ${response}`);
     const message = `(${details.join(', ')})`;
     super(message);
-
+    this.message = message;
+    this.response = response;
     this.request = request;
   }
 }
