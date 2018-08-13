@@ -39,6 +39,40 @@ export type TError = {
   },
 };
 
+const reURLInformation = new RegExp(
+  [
+    '^(https?:)//', // protocol
+    '(([^:/?#]*)(?::([0-9]+))?)', // host (hostname and port)
+    '(/api/v\\d+)', // Path header
+    '(/[^?#]*)', // pathname
+    '(\\?[^#]*|)', // search
+    '(#.*|)$', // hash
+  ].join(''),
+);
+
+function getLocation(href) {
+  // https://stackoverflow.com/questions/736513/how-do-i-parse-a-url-into-hostname-and-path-in-javascript
+  const match = href.match(reURLInformation);
+  return (
+    match && {
+      href,
+      protocol: match[1],
+      host: match[2],
+      hostName: match[3],
+      port: match[4],
+      pathHeader: match[5],
+      pathName: match[6],
+      search: match[7],
+      hash: match[8],
+    }
+  );
+}
+
+const parseRequestURL = (request: XMLHttpRequest) =>
+  getLocation(request.responseURL);
+
+export { parseRequestURL };
+
 export default class GenericAPI {
   host: string;
   version: string;
