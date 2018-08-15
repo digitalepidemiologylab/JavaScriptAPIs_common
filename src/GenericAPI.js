@@ -73,12 +73,14 @@ const parseRequestURL = (request: XMLHttpRequest) =>
 
 export { parseRequestURL };
 
+export type TCompressionType = 'auto' | 'gzip' | 'none';
+
 export default class GenericAPI {
   host: string;
   version: string;
   apiKey: string;
   sessionToken: string;
-  compress: boolean;
+  compress: TCompressionType;
 
   onError: ?(error: TError) => void = null;
 
@@ -86,8 +88,9 @@ export default class GenericAPI {
     apiKey: string,
     host: string,
     version: string,
-    compress: boolean = true,
+    compress: TCompressionType = 'auto',
   ) {
+    // compress = false;
     if (!apiKey) {
       throw new Error('Endpoints need an API key');
     }
@@ -118,12 +121,22 @@ export default class GenericAPI {
     }
 
     let responseType: ResponseType;
-    if (this.compress) {
-      headers.push(['Accept-Encoding', 'gzip']);
-      responseType = 'arraybuffer';
-    } else {
-      headers.push(['Accept-Encoding', 'identity']);
-      responseType = '';
+    switch (this.compress) {
+      case 'auto':
+        // Leave default params
+        // In some frameworks (i.e. React Native)
+        // that means gzip and auto decompression
+        break;
+      case 'gzip':
+        headers.push(['Accept-Encoding', 'gzip']);
+        responseType = 'arraybuffer';
+        break;
+      case 'none':
+        headers.push(['Accept-Encoding', 'identity']);
+        responseType = '';
+        break;
+      default:
+        throw new Error(`Unknown compression parameter: ${this.compress}`);
     }
 
     function handler(response: Response) {
