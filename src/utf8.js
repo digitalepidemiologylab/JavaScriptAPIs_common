@@ -303,7 +303,9 @@ class UTF8 {
       const decoded = responseToString(results[0]);
       const gzipdecoded = responseToString(results[1]);
       const original = results[2].responseText;
-      console.log(
+      // $FlowExpectedError
+      const log = console.tron.log || console.log;
+      log(
         `UTF-8 decoding test: decoded; ${decoded.length}, gzip decoded: ${
           gzipdecoded.length
         }, original: ${original.length}`,
