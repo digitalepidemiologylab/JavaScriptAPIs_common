@@ -185,12 +185,12 @@ export default class GenericAPI {
             if (obj !== null && obj !== undefined) {
               handler(obj);
               resolve(obj);
-            } else {
-              reject(new Error('Could not parse JSON response'));
+              return;
             }
           } catch (e) {
-            reject(new Error('Could not parse JSON response'));
+            /**/
           }
+          reject(new Error('Could not parse JSON response'));
         } else {
           resolve(xhttp);
         }
