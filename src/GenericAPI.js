@@ -51,7 +51,7 @@ const reURLInformation = new RegExp(
 );
 
 function getLocation(href) {
-  // https://stackoverflow.com/questions/736513/how-do-i-parse-a-url-into-hostname-and-path-in-javascript
+  // https://stackoverflow.com/questions/736513
   const match = href.match(reURLInformation);
   return (
     match && {
