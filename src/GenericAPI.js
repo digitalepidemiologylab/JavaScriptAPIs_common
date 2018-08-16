@@ -34,9 +34,7 @@ type Response = {|
 
 export type TError = {
   message?: string,
-  request: {
-    status?: ?number,
-  },
+  request: XMLHttpRequest,
 };
 
 const reURLInformation = new RegExp(
