@@ -120,7 +120,6 @@ function reachUrl(
   };
 
   xhttp.timeout = timeout || 0;
-  // alert(`xhttp.timeout: ${xhttp.timeout}`);
 
   let curlStr = `curl -X ${method}`;
 
