@@ -67,7 +67,10 @@ type ParamsType = {
   responseType?: ResponseType,
 };
 
-const curlEquivalentToConsole = false;
+const debugConfig = {
+  curlEquivalentToConsole: false,
+  curlEquivalentToTronConsole: false,
+};
 
 function reachUrl(
   method: string = 'GET',
@@ -121,7 +124,10 @@ function reachUrl(
 
   xhttp.timeout = timeout || 0;
 
-  let curlStr = `curl -X ${method}`;
+  const { curlEquivalentToConsole, curlEquivalentToTronConsole } = debugConfig;
+  const curlNeeded = curlEquivalentToConsole || curlEquivalentToTronConsole;
+
+  let curlStr = curlNeeded ? `curl -X ${method}` : null;
 
   function singleQuoteEscape(s) {
     return s.replace(/'/g, '\\\'');
@@ -132,9 +138,11 @@ function reachUrl(
     headers.forEach((header) => {
       if (Array.isArray(header) && header.length === 2) {
         xhttp.setRequestHeader(header[0], header[1]);
-        curlStr += ` -H '${singleQuoteEscape(header[0])}: ${singleQuoteEscape(
-          header[1],
-        )}'`;
+        if (curlStr) {
+          curlStr += ` -H '${singleQuoteEscape(header[0])}: ${singleQuoteEscape(
+            header[1],
+          )}'`;
+        }
       }
     });
   }
@@ -143,14 +151,19 @@ function reachUrl(
   let bodyStr: ?string = null;
   if (body) {
     bodyStr = typeof body === 'string' ? body : JSON.stringify(body);
-
-    curlStr += ` -d '${singleQuoteEscape(bodyStr)}'`;
+    if (curlStr) {
+      curlStr += ` -d '${singleQuoteEscape(bodyStr)}'`;
+    }
   }
 
-  curlStr += ` ${url}`;
+  if (curlStr) {
+    curlStr += ` ${url}`;
+  }
 
   // Log curl equivalent
   if (curlEquivalentToConsole) console.log(curlStr);
+  // $FlowExpectedError
+  if (curlEquivalentToTronConsole) console.tron.log(curlStr);
 
   // Send request
   xhttp.send(bodyStr);
