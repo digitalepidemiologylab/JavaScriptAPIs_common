@@ -282,6 +282,7 @@ class UTF8 {
 
   static test() {
     // const testUrl = 'https://www.w3.org/2001/06/utf-8-test/UTF-8-demo.html';
+    // eslint-disable-next-line max-len
     // const testUrl = 'https://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-test.txt')
     // Currently longest Wikipedia article in chinese (about Lenin)
     const testUrl = 'https://zh.wikipedia.org/wiki/弗拉基米尔·伊里奇·列宁';
