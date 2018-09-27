@@ -31,6 +31,7 @@ function responseToObject(xhttp: XMLHttpRequest) {
 
 class HttpError extends Error {
   request: XMLHttpRequest;
+
   response: ?string;
 
   constructor(request: XMLHttpRequest) {
@@ -199,5 +200,7 @@ function reachUrlWithPromise(params: ParamsType): Promise<XMLHttpRequest> {
   });
 }
 
-export { HttpError, reachUrlWithPromise, responseToString, responseToObject };
+export {
+  HttpError, reachUrlWithPromise, responseToString, responseToObject,
+};
 export type UrlPromiseParamsType = ParamsType;
