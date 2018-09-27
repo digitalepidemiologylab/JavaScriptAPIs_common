@@ -1,7 +1,7 @@
 // @flow
 
 import { byteArrayToStr } from './bytearray-helpers';
-import Url from './url';
+import Url from './url-helpers';
 
 function responseToString(xhttp: XMLHttpRequest) {
   try {

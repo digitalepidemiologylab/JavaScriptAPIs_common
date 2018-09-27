@@ -4,7 +4,7 @@ import {
   reachUrlWithPromise,
   responseToObject,
   type ResponseType,
-} from './ajaxhelpers';
+} from './ajax-helpers';
 
 const RestFulMethods = {
   GET: 'GET',

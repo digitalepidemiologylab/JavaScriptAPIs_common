@@ -4,7 +4,7 @@
 
 /* eslint no-bitwise: 0, no-mixed-operators: 0, camelcase: 0 */
 
-import { reachUrlWithPromise, responseToString } from './ajaxhelpers';
+import { reachUrlWithPromise, responseToString } from './ajax-helpers';
 
 const { StringDecoder } = require('string_decoder');
 const { Buffer } = require('safe-buffer');
