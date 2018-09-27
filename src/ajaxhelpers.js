@@ -1,6 +1,7 @@
 // @flow
 
 import { byteArrayToStr } from './bytearray-helpers';
+import Url from './url';
 
 function responseToString(xhttp: XMLHttpRequest) {
   try {
@@ -158,7 +159,7 @@ function reachUrl(
   }
 
   if (curlStr) {
-    curlStr += ` ${url}`;
+    curlStr += ` "${new Url(url).toString()}"`;
   }
 
   // Log curl equivalent
