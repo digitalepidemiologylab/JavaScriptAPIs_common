@@ -11,21 +11,26 @@ const { Buffer } = require('safe-buffer');
 
 class UTF8 {
   static EOF_byte: number = -1;
+
   static EOF_code_point: number = -1;
 
   static encoderError(code_point: number) {
     console.error('UTF8 encoderError', code_point);
   }
+
   static decoderError(fatal: boolean, opt_code_point?: number): number {
     if (fatal) console.error('UTF8 decoderError', opt_code_point);
     return opt_code_point || 0xfffd;
   }
+
   static inRange(a: number, min: number, max: number) {
     return min <= a && a <= max;
   }
+
   static div(n: number, d: number) {
     return Math.floor(n / d);
   }
+
   static stringToCodePoints(string: string) {
     /** @type {Array.<number>} */
     const cps = [];
@@ -146,8 +151,8 @@ class UTF8 {
         code_point = this.decoderError(fatal, byte);
       } else {
         utf8_bytes_seen += 1;
-        utf8_code_point +=
-          (byte - 0x80) * 64 ** (utf8_bytes_needed - utf8_bytes_seen);
+        utf8_code_point
+          += (byte - 0x80) * 64 ** (utf8_bytes_needed - utf8_bytes_seen);
 
         if (utf8_bytes_seen !== utf8_bytes_needed) {
           code_point = null;
@@ -159,9 +164,9 @@ class UTF8 {
           utf8_bytes_seen = 0;
           utf8_lower_boundary = 0;
           if (
-            lower_boundary <= cp &&
-            cp <= 0x10ffff &&
-            !(cp >= 0xd800 && cp <= 0xdfff)
+            lower_boundary <= cp
+            && cp <= 0x10ffff
+            && !(cp >= 0xd800 && cp <= 0xdfff)
           ) {
             code_point = cp;
           } else {

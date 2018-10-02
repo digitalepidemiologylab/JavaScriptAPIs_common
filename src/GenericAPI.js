@@ -66,8 +66,9 @@ function getLocation(href) {
   );
 }
 
-const parseRequestURL = (request: XMLHttpRequest) =>
-  getLocation(request.responseURL);
+const parseRequestURL = (request: XMLHttpRequest) => (
+  getLocation(request.responseURL)
+);
 
 export { parseRequestURL };
 
@@ -75,9 +76,13 @@ export type TCompressionType = 'auto' | 'gzip' | 'none';
 
 export default class GenericAPI {
   host: string;
+
   version: string;
+
   apiKey: string;
+
   sessionToken: string;
+
   compress: TCompressionType;
 
   onError: ?(error: TError) => void = null;
