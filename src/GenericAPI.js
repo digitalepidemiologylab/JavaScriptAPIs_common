@@ -16,20 +16,20 @@ const RestFulMethods = {
 
 type Links = {|
   next?: string,
-  prev?: string,
-  first?: string,
-  last?: string,
+    prev ?: string,
+    first ?: string,
+    last ?: string,
 |};
 
 type LinkName = $Keys<Links>;
 
 type Response = {|
   links: Links,
-  next?: ?Function,
-  prev?: ?Function,
-  first?: ?Function,
-  last?: ?Function,
-  error?: Error,
+    next ?: ? Function,
+    prev ?: ? Function,
+    first ?: ? Function,
+    last ?: ? Function,
+    error ?: Error,
 |};
 
 export type TError = {
@@ -180,30 +180,30 @@ export default class GenericAPI {
         timeout,
         responseType,
       })
-      .then((xhttp: XMLHttpRequest) => {
-        const contentType = xhttp.getResponseHeader('Content-Type');
-        if (/^application\/json(;|$)/.test(contentType)) {
-          try {
-            const obj: ?Object = responseToObject(xhttp);
-            if (obj !== null && obj !== undefined) {
-              handler(obj);
-              resolve(obj);
-              return;
+        .then((xhttp: XMLHttpRequest) => {
+          const contentType = xhttp.getResponseHeader('Content-Type');
+          if (/^application\/json(;|$)/.test(contentType)) {
+            try {
+              const obj: ?Object = responseToObject(xhttp);
+              if (obj !== null && obj !== undefined) {
+                handler(obj);
+                resolve(obj);
+                return;
+              }
+            } catch (e) {
+              /**/
             }
-          } catch (e) {
-            /**/
+            reject(new Error('Could not parse JSON response'));
+          } else {
+            resolve(xhttp);
           }
-          reject(new Error('Could not parse JSON response'));
-        } else {
-          resolve(xhttp);
-        }
-      })
-      .catch((error) => {
-        if (this.onError) {
-          this.onError(error);
-        }
-        reject(error);
-      });
+        })
+        .catch((error) => {
+          if (this.onError) {
+            this.onError(error);
+          }
+          reject(error);
+        });
     });
   }
 
