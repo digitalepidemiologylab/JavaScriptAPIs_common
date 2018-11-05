@@ -75,6 +75,18 @@ export { parseRequestURL };
 export type TCompressionType = 'auto' | 'gzip' | 'none';
 
 export default class GenericAPI {
+  static parseUrl(url: string) {
+    const re = /^(https?):\/\/([^/]+)\/api\/v(\d+(?:\.\d+)?)\/([^/]+)(?:\/(.*))?$/;
+    const matches = url.match(re);
+    if (matches) {
+      const [match, protocol, host, version, endpoint, parameters] = matches;
+      return {
+        match, protocol, host, version, endpoint, parameters,
+      };
+    }
+    return null;
+  }
+
   host: string;
 
   version: string;
