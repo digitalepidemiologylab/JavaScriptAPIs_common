@@ -83,6 +83,8 @@ export default class GenericAPI {
 
   sessionToken: string;
 
+  acceptLanguage: ?string;
+
   compress: TCompressionType;
 
   onError: ?(error: TError) => void = null;
@@ -121,6 +123,10 @@ export default class GenericAPI {
     const headers = [['Authorization', authorization]];
     if (typeof body !== 'undefined') {
       headers.push(['Content-Type', 'application/json']);
+    }
+
+    if (typeof this.acceptLanguage === 'string') {
+      headers.push(['Accept-Language', this.acceptLanguage]);
     }
 
     let responseType: ResponseType;
