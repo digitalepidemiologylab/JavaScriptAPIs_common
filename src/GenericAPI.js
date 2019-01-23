@@ -198,30 +198,30 @@ export default class GenericAPI {
         timeout,
         responseType,
       })
-        .then((xhttp: XMLHttpRequest) => {
-          const contentType = xhttp.getResponseHeader('Content-Type');
-          if (/^application\/json(;|$)/.test(contentType)) {
-            try {
-              const obj: ?Object = responseToObject(xhttp);
-              if (obj !== null && obj !== undefined) {
-                handler(obj);
-                resolve(obj);
-                return;
-              }
-            } catch (e) {
-              /**/
+      .then((xhttp: XMLHttpRequest) => {
+        const contentType = xhttp.getResponseHeader('Content-Type');
+        if (/^application\/json(;|$)/.test(contentType)) {
+          try {
+            const obj: ?Object = responseToObject(xhttp);
+            if (obj !== null && obj !== undefined) {
+              handler(obj);
+              resolve(obj);
+              return;
             }
-            reject(new Error('Could not parse JSON response'));
-          } else {
-            resolve(xhttp);
+          } catch (e) {
+            /**/
           }
-        })
-        .catch((error) => {
-          if (this.onError) {
-            this.onError(error);
-          }
-          reject(error);
-        });
+          reject(new Error('Could not parse JSON response'));
+        } else {
+          resolve(xhttp);
+        }
+      })
+      .catch((error) => {
+        if (this.onError) {
+          this.onError(error);
+        }
+        reject(error);
+      });
     });
   }
 
