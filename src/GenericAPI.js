@@ -97,6 +97,8 @@ export default class GenericAPI {
 
   acceptLanguage: ?string;
 
+  contentType: string;
+
   compress: TCompressionType;
 
   onError: ?(error: TError) => void = null;
@@ -106,6 +108,7 @@ export default class GenericAPI {
     host: string,
     version: string,
     compress: TCompressionType = 'auto',
+    contentType: 'application/json' | 'multipart/form-data' = 'application/json'
   ) {
     // compress = false;
     if (!apiKey) {
@@ -115,6 +118,7 @@ export default class GenericAPI {
     this.host = host;
     this.version = version;
     this.compress = compress;
+    this.contentType = contentType;
   }
 
   requestURL(
@@ -134,7 +138,7 @@ export default class GenericAPI {
 
     const headers = [['Authorization', authorization]];
     if (typeof body !== 'undefined') {
-      headers.push(['Content-Type', 'application/json']);
+      headers.push(['Content-Type', this.contentType]);
     }
 
     if (typeof this.acceptLanguage === 'string') {
