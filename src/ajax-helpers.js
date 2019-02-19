@@ -188,7 +188,7 @@ function reachUrlWithPromise(params: ParamsType): Promise<XMLHttpRequest> {
       params.headers || [],
       params.body,
       (xhttp: XMLHttpRequest) => {
-        if (xhttp.status === 200) {
+        if (Math.floor(xhttp.status / 100) === 2) {
           resolve(xhttp);
         } else {
           reject(new HttpError(xhttp));
