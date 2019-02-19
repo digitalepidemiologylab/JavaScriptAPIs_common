@@ -74,11 +74,44 @@ const debugConfig = {
   curlEquivalentToTronConsole: false,
 };
 
+function convertModelToFormData(
+  model: any,
+  form: ?FormData = null,
+  namespace: string = ''
+): FormData {
+  const formData = form || new FormData();
+
+  const keys = Object.keys(model);
+  keys.forEach((propertyName) => {
+    const formKey = namespace ? `${namespace}[${propertyName}]` : propertyName;
+    if (model[propertyName] instanceof Date) {
+      formData.append(formKey, model[propertyName].toISOString());
+    } else if (model[propertyName] instanceof Array) {
+      model[propertyName].forEach((element, index) => {
+        const tempFormKey = `${formKey}[${index}]`;
+        convertModelToFormData(element, formData, tempFormKey);
+      });
+    } else if (typeof model[propertyName] === 'object'
+      && !(model[propertyName] instanceof File)) {
+      // eslint-disable-next-line no-underscore-dangle
+      if (model[propertyName]._keepAsObject) {
+        const { _keepAsObject, ...obj } = model[propertyName];
+        formData.append(formKey, obj);
+      } else {
+        convertModelToFormData(model[propertyName], formData, formKey);
+      }
+    } else {
+      formData.append(formKey, model[propertyName].toString());
+    }
+  });
+  return formData;
+}
+
 function reachUrl(
   method: string = 'GET',
   url: string,
   headers: string[][],
-  body: ?(string | Object),
+  body: ?(string | Object | FormData),
   callback: (xhttp: XMLHttpRequest, event?: any) => void,
   errorCallback: (xhttp: XMLHttpRequest) => void,
   timeout: ?number,
@@ -131,27 +164,51 @@ function reachUrl(
 
   let curlStr = curlNeeded ? `curl -X ${method}` : null;
 
-  function singleQuoteEscape(s) {
+  function singleQuoteEscape(s: string) {
     return s.replace(/'/g, '\\\'');
   }
 
   // Put headers
+  let sendAsFormData = false;
   if (Array.isArray(headers)) {
     headers.forEach((header) => {
       if (Array.isArray(header) && header.length === 2) {
-        xhttp.setRequestHeader(header[0], header[1]);
+        const [name, value] = header;
+        if (!sendAsFormData
+          && name === 'Content-Type'
+          && value === 'multipart/form-data') {
+          sendAsFormData = true;
+        }
+        xhttp.setRequestHeader(name, value);
         if (curlStr) {
-          curlStr += ` -H '${singleQuoteEscape(header[0])}: ${singleQuoteEscape(
-            header[1],
+          curlStr += ` -H '${singleQuoteEscape(name)}: ${singleQuoteEscape(
+            value,
           )}'`;
         }
       }
     });
   }
+  const isBodyFormData = Object.prototype.isPrototypeOf.call(FormData, body);
+  if (isBodyFormData) {
+    if (!sendAsFormData) {
+      xhttp.setRequestHeader('Content-Type', 'multipart/form-data');
+      sendAsFormData = true;
+    }
+  }
 
   // Prepare body
   let bodyStr: ?string = null;
-  if (body) {
+  let formData: ?FormData = null;
+  if (sendAsFormData) {
+    if (typeof body === 'string') {
+      formData = convertModelToFormData(body);
+    } else {
+      formData = body;
+    }
+    if (curlStr) {
+      curlStr += ` -d '${JSON.stringify(formData)}'`;
+    }
+  } else if (body) {
     bodyStr = typeof body === 'string' ? body : JSON.stringify(body);
     if (curlStr) {
       curlStr += ` -d '${singleQuoteEscape(bodyStr)}'`;
@@ -168,7 +225,7 @@ function reachUrl(
   if (curlEquivalentToTronConsole) console.tron.log(curlStr);
 
   // Send request
-  xhttp.send(bodyStr);
+  xhttp.send(bodyStr || formData);
 
   // Handle timeouts ourselves too because on Android, it seems
   // buggy connections in emulator fail to trigger timeouts
@@ -202,6 +259,7 @@ function reachUrlWithPromise(params: ParamsType): Promise<XMLHttpRequest> {
 }
 
 export {
-  HttpError, reachUrlWithPromise, responseToString, responseToObject,
+  HttpError, reachUrl, reachUrlWithPromise, responseToString,
+  responseToObject, convertModelToFormData,
 };
 export type UrlPromiseParamsType = ParamsType;
