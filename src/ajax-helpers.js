@@ -191,7 +191,7 @@ function reachUrl(
   const isBodyFormData = Object.prototype.isPrototypeOf.call(FormData, body);
   if (isBodyFormData) {
     if (!sendAsFormData) {
-      //xhttp.setRequestHeader('Content-Type', 'multipart/form-data');
+      // xhttp.setRequestHeader('Content-Type', 'multipart/form-data');
       sendAsFormData = true;
     }
   }
