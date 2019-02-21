@@ -188,7 +188,11 @@ function reachUrl(
       }
     });
   }
-  const isBodyFormData = Object.prototype.isPrototypeOf.call(FormData, body);
+  // const isBodyFormData = FormData.prototype.isPrototypeOf(body);
+  const isBodyFormData = Object.prototype.isPrototypeOf.call(
+    FormData.prototype, body
+  );
+
   if (isBodyFormData) {
     if (!sendAsFormData) {
       // xhttp.setRequestHeader('Content-Type', 'multipart/form-data');
