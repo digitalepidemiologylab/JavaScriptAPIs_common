@@ -145,6 +145,8 @@ export default class GenericAPI {
       headers.push(['Accept-Language', this.acceptLanguage]);
     }
 
+    headers.push(['Accept', 'application/json']);
+
     let responseType: ResponseType;
     switch (this.compress) {
       case 'auto':
