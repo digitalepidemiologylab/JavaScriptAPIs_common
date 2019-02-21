@@ -137,7 +137,7 @@ export default class GenericAPI {
     }
 
     const headers = [['Authorization', authorization]];
-    if (typeof body !== 'undefined') {
+    if (typeof body !== 'undefined' && this.contentType) {
       headers.push(['Content-Type', this.contentType]);
     }
 
