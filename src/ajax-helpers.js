@@ -162,7 +162,7 @@ function reachUrl(
   const { curlEquivalentToConsole, curlEquivalentToTronConsole } = debugConfig;
   const curlNeeded = curlEquivalentToConsole || curlEquivalentToTronConsole;
 
-  let curlStr = curlNeeded ? `curl -X ${method}` : null;
+  let curlStr = curlNeeded ? `curl --compressed -X ${method}` : null;
 
   function singleQuoteEscape(s: string) {
     return s.replace(/'/g, '\\\'');
