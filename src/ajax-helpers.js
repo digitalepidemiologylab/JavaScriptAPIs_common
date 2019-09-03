@@ -210,7 +210,7 @@ function reachUrl(
       formData = body;
     }
     if (curlStr) {
-      curlStr += ` -d '${JSON.stringify(formData)}'`;
+      curlStr += ` -d '${JSON.stringify(formData || "")}'`;
     }
   } else if (body) {
     bodyStr = typeof body === 'string' ? body : JSON.stringify(body);
